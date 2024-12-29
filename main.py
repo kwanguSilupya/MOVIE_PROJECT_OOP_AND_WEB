@@ -69,6 +69,19 @@ def main():
 
     storage = StorageJson(f"{user}.json")
 
+    # Ensure all movies have a 'poster' key
+    movies = storage.list_movies()
+    updated = False
+    for title, details in movies.items():
+        if "poster" not in details:
+            movies[title]["poster"] = "No poster available"
+            updated = True
+
+    if updated:
+        with open(f"{user}.json", 'w') as file:
+            json.dump(movies, file, indent=4)
+        print("Updated movies file to include missing 'poster' fields.")
+
     while True:
         print("\nMenu:")
         print("0. Exit")
@@ -90,12 +103,16 @@ def main():
             print("Goodbye!")
             break
         elif choice == 1:
+            # Updated block for listing movies
             movies = storage.list_movies()
             if not movies:
                 print("No movies found.")
             else:
                 for title, details in movies.items():
-                    print(f"{title} - Year: {details['year']}, Rating: {details['rating']}, Poster: {details['poster']}")
+                    year = details.get("year", "Unknown year")
+                    rating = details.get("rating", "Unknown rating")
+                    poster = details.get("poster", "No poster available")
+                    print(f"{title} - Year: {year}, Rating: {rating}, Poster: {poster}")
         elif choice == 2:
             title = input("Enter movie title: ").strip()
             try:
@@ -117,7 +134,6 @@ def main():
                 print("Invalid input. Rating must be a number.")
         else:
             print("Invalid choice. Please select a valid option.")
-
 
 if __name__ == "__main__":
     main()
