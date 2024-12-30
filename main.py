@@ -1,9 +1,7 @@
-import os
-import json
-import requests
 from storage_json import StorageJson
 from storage_csv import StorageCsv
 from movie_app import MovieApp
+import requests
 
 
 def generate_website(movies, template_file, output_file):
@@ -43,6 +41,18 @@ def generate_website(movies, template_file, output_file):
         print(f"Error: Template file '{template_file}' not found.")
     except Exception as e:
         print(f"Error generating website: {e}")
+
+
+def fetch_movie_data_from_api(title, api_key):
+    """
+    Fetch movie data from the OMDb API.
+    """
+    url = f"http://www.omdbapi.com/?t={title}&apikey={api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()  # Return the JSON response
+    else:
+        return {"error": "Failed to fetch movie data."}
 
 
 def main():
@@ -101,8 +111,13 @@ def main():
                 if "error" in movie_data:
                     print(f"Error fetching movie data: {movie_data['error']}")
                 else:
-                    storage.add_movie(movie_data["title"], movie_data["year"], movie_data["rating"],
-                                      movie_data["poster"], movie_data["poster_url"])
+                    # Ensure you pass the right arguments to add_movie
+                    storage.add_movie(
+                        movie_data["Title"],  # Title
+                        int(movie_data["Year"]),  # Year
+                        float(movie_data["imdbRating"]) if movie_data["imdbRating"] != "N/A" else 0.0,  # Rating
+                        movie_data["Poster"],  # Poster
+                    )
         elif choice == 3:
             title = input("Enter movie title to delete: ").strip()
             storage.delete_movie(title)
