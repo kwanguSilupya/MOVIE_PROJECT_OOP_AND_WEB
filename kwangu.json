@@ -18,5 +18,25 @@
         "rating": 5.0,
         "year": 1994,
         "poster": "No poster available"
+    },
+    "Blade": {
+        "year": "1998",
+        "rating": "7.1",
+        "poster": "https://m.media-amazon.com/images/M/MV5BNzAzMmY3OWMtNDgyMS00Y2U4LTlmM2UtY2YwMmM0MDI5ODJmXkEyXkFqcGc@._V1_SX300.jpg"
+    },
+    "Hellboy": {
+        "year": "2004",
+        "rating": "6.9",
+        "poster": "https://m.media-amazon.com/images/M/MV5BMWZhODhmZjktNmIzNC00NGRmLTkyMDEtODVmMzVmNGQwYWU0XkEyXkFqcGc@._V1_SX300.jpg"
+    },
+    "Guardians of the Galaxy": {
+        "year": "2014",
+        "rating": "8.0",
+        "poster": "https://m.media-amazon.com/images/M/MV5BM2ZmNjQ2MzAtNDlhNi00MmQyLWJhZDMtNmJiMjFlOWY4MzcxXkEyXkFqcGc@._V1_SX300.jpg"
+    },
+    "Sex in the City": {
+        "year": "2000",
+        "rating": "7.7",
+        "poster": "N/A"
     }
 }

@@ -21,19 +21,20 @@ class MovieApp:
 
     def _command_movie_stats(self):
         """
-        Calculates and displays movie statistics (e.g., average rating).
+        Displays movie statistics such as total number of movies and average rating.
         """
         movies = self._storage.list_movies()
         if not movies:
-            print("No movies available for statistics.")
+            print("No movies found to display statistics.")
             return
 
-        total_movies = len(movies)
-        total_ratings = sum(movie["rating"] for movie in movies.values())
-        average_rating = total_ratings / total_movies if total_movies > 0 else 0
-
-        print(f"Total Movies: {total_movies}")
-        print(f"Average Rating: {average_rating:.2f}")
+        try:
+            total_ratings = sum(float(movie.get("rating", 0)) for movie in movies.values() if movie.get("rating"))
+            average_rating = total_ratings / len(movies)
+            print(f"Total movies: {len(movies)}")
+            print(f"Average rating: {average_rating:.2f}")
+        except ValueError as e:
+            print(f"Error calculating statistics: {e}")
 
     def _generate_website(self):
         """
