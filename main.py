@@ -1,8 +1,11 @@
 from storage_json import StorageJson
+from storage_csv import StorageCsv
+from movie_app import MovieApp
 import os
 import json
 
 
+# The StorageJson class remains part of the main.py file
 class StorageJson:
     def __init__(self, file_path):
         self.file_path = file_path
@@ -56,6 +59,7 @@ class StorageJson:
             print(f"Movie '{title}' not found.")
 
 
+# Main function to run the app
 def main():
     """
     Main menu for the Movies App Reloaded.
@@ -67,73 +71,38 @@ def main():
         print("Invalid username. Exiting...")
         return
 
-    storage = StorageJson(f"{user}.json")
+    # Ask the user to choose the storage format
+    storage_format = input("Choose storage format (1 for JSON, 2 for CSV): ").strip()
 
-    # Ensure all movies have a 'poster' key
-    movies = storage.list_movies()
-    updated = False
-    for title, details in movies.items():
-        if "poster" not in details:
-            movies[title]["poster"] = "No poster available"
-            updated = True
+    if storage_format == "1":
+        # Use StorageJson for JSON storage
+        storage = StorageJson(f"{user}.json")
+    elif storage_format == "2":
+        # Use StorageCsv for CSV storage
+        storage = StorageCsv(f"{user}.csv")
+    else:
+        print("Invalid choice. Exiting...")
+        return
 
-    if updated:
-        with open(f"{user}.json", 'w') as file:
-            json.dump(movies, file, indent=4)
-        print("Updated movies file to include missing 'poster' fields.")
+    movie_app = MovieApp(storage)
 
-    while True:
-        print("\nMenu:")
-        print("0. Exit")
-        print("1. List movies")
-        print("2. Add movie")
-        print("3. Delete movie")
-        print("4. Update movie rating")
+    # Ensure all movies have a 'poster' key in the JSON file
+    if isinstance(storage, StorageJson):
+        movies = storage.list_movies()
+        updated = False
+        for title, details in movies.items():
+            if "poster" not in details:
+                movies[title]["poster"] = "No poster available"
+                updated = True
 
-        try:
-            choice = int(input("\nChoose an option: "))
-        except KeyboardInterrupt:
-            print("\nExiting program.")
-            break
-        except ValueError:
-            print("Invalid input. Please enter a number between 0 and 4.")
-            continue
+        if updated:
+            with open(f"{user}.json", 'w') as file:
+                json.dump(movies, file, indent=4)
+            print("Updated movies file to include missing 'poster' fields.")
 
-        if choice == 0:
-            print("Goodbye!")
-            break
-        elif choice == 1:
-            # Updated block for listing movies
-            movies = storage.list_movies()
-            if not movies:
-                print("No movies found.")
-            else:
-                for title, details in movies.items():
-                    year = details.get("year", "Unknown year")
-                    rating = details.get("rating", "Unknown rating")
-                    poster = details.get("poster", "No poster available")
-                    print(f"{title} - Year: {year}, Rating: {rating}, Poster: {poster}")
-        elif choice == 2:
-            title = input("Enter movie title: ").strip()
-            try:
-                year = int(input("Enter movie release year: "))
-                rating = float(input("Enter movie rating (0.0 - 10.0): "))
-                poster = input("Enter movie poster URL or path: ").strip()
-                storage.add_movie(title, year, rating, poster)
-            except ValueError:
-                print("Invalid input. Year must be an integer and rating must be a number.")
-        elif choice == 3:
-            title = input("Enter movie title to delete: ").strip()
-            storage.delete_movie(title)
-        elif choice == 4:
-            title = input("Enter movie title to update: ").strip()
-            try:
-                rating = float(input("Enter new movie rating (0.0 - 10.0): "))
-                storage.update_movie(title, rating)
-            except ValueError:
-                print("Invalid input. Rating must be a number.")
-        else:
-            print("Invalid choice. Please select a valid option.")
+    # Run the movie app
+    movie_app.run()
+
 
 if __name__ == "__main__":
     main()
